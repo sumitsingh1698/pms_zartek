@@ -19,7 +19,7 @@ import '../services/apis.dart';
 import 'package:http/http.dart' as http;
 
 const debug = true;
-
+//
 class Details extends StatefulWidget with WidgetsBindingObserver {
   final TargetPlatform platform;
 

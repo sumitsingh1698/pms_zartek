@@ -81,7 +81,7 @@ class _HelpState extends State<Help> {
                                 onPressed: ()  {
 
 
-                                  FlutterOpenWhatsapp.sendSingleMessage(widget.mail , msga);
+                                  FlutterLaunch.launchWathsApp(phone:widget.mail ,message: msga);
 
                                 }
 
@@ -119,7 +119,7 @@ class _HelpState extends State<Help> {
                               onPressed: ()  {
 
 
-                                FlutterOpenWhatsapp.sendSingleMessage(widget.mail , msgb);
+                                FlutterLaunch.launchWathsApp(phone:widget.mail ,message: msgb);
 
                               }),
                         ],
@@ -155,7 +155,7 @@ class _HelpState extends State<Help> {
                               onPressed: ()  {
 
 
-                                FlutterOpenWhatsapp.sendSingleMessage(widget.mail , msgc);
+                                FlutterLaunch.launchWathsApp(phone:widget.mail ,message: msgc);
 
                               }),
                         ],

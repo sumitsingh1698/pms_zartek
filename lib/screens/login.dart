@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:zartek_pms/bottomnavbar/home_widget.dart';
-import 'package:zartek_pms/models/token.dart';
+import 'package:zartek_pms/models/my_profile.dart';
 import 'dart:convert';
+import 'package:flutter/services.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zartek_pms/services/apis.dart';
@@ -23,25 +25,9 @@ class _MyHomePageState extends State<Login> {
   String _email;
   String _password;
   bool wrong = false;
-  List<Errors> error = [];
 
   final formKey = new GlobalKey<FormState>();
 
-  _textMe() async {
-    // Android
-    const uri = 'sms:?body=';
-    if (await canLaunch(uri)) {
-      await launch(uri);
-    } else {
-      // iOS
-      const uri = 'sms:?body=';
-      if (await canLaunch(uri)) {
-        await launch(uri);
-      } else {
-        throw 'Could not launch $uri';
-      }
-    }
-  }
   //Validate save
 
   void validateAndSave() async {
@@ -54,34 +40,9 @@ class _MyHomePageState extends State<Login> {
         "email": mobController.text.toString(),
         "password": mobControllerr.text.toString()
       };
-      final response = await http.post(
-        "https://zartekpms.herokuapp.com/authenticate_client/",
-        body: json.encode(body),
-      );
-      if (response.statusCode != 200) {
-        setState(() {
-          wrong = true;
-        });
-      }
-      Apis().registerUser(body: body).then((res) async {
 
-        SharedPreferences _shared = await SharedPreferences.getInstance();
-        _shared.setString(
-          "email",
-          mobController.text.toString(),
-        );
-        _shared.setString(
-          "password",
-          mobControllerr.text.toString(),
-        );
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => Home(
-                    email: mobController.text.toString(),
-                    password: mobControllerr.text.toString(),
-                  )),
-        );
+      registerUser(body: body).then((res) async {
+        print('this is res'+res.toString());
       });
     } else {
       setState(() {
@@ -89,9 +50,37 @@ class _MyHomePageState extends State<Login> {
       });
     }
   }
+  Future<Map<String, dynamic>> registerUser({var body}) async {
+    var headers = {"Content-Type": "application/json"};
+    final response = await http.post(
+        'https://zartek-pms.herokuapp.com/api/login/',
+        body: json.encode(body),headers: headers
+    );
+    print("gvg" + response.body.toString());
 
+    if (response.statusCode == 200) {
+      print('statuscode:'+response.statusCode.toString());
+      var responseJson = json.decode(response.body);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
 
-
+      prefs.setString("token",responseJson['key']);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Home(
+              email: mobController.text.toString(),
+              password: mobControllerr.text.toString(),
+            )),
+      );
+      return responseJson;
+    } else {
+      // If that call was not successful, throw an error.
+      setState(() {
+        wrong = true;
+      });
+      throw Exception('Failed to load post');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     //Email
@@ -234,116 +223,123 @@ class _MyHomePageState extends State<Login> {
     }
 
 //Body
-    return Scaffold(
-      //resizeToAvoidBottomPadding: false,
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color(0xFFACC9DB),
-              // Color(0xFF78A7C5),
-              Color(0xFF256EA1),
-            ],
-            stops: [0.1, 2.0],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+    return WillPopScope(
+      onWillPop: () {
+        SystemNavigator.pop();
+        return;
+      },
+      child: Scaffold(
+        //resizeToAvoidBottomPadding: false,
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFFACC9DB),
+                // Color(0xFF78A7C5),
+                Color(0xFF256EA1),
+              ],
+              stops: [0.1, 2.0],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
           ),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 50,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 30, right: 30, bottom: 30),
-                child: SingleChildScrollView(
-                  child: new Form(
-                    autovalidate: true,
-                    key: formKey,
-                    child: new Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        SizedBox(
-                          height: 15,
-                        ),
-                        _logoText(),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        _showEmailInput(),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        _showPasswordInput(),
-                        SizedBox(
-                          height: 9.0,
-                        ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  height: 50,
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 30, right: 30, bottom: 30),
+                  child: SingleChildScrollView(
+                    child: new Form(
+                      autovalidate: true,
+                      key: formKey,
+                      child: new Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(
+                            height: 15,
+                          ),
+                          _logoText(),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          _showEmailInput(),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          _showPasswordInput(),
+                          SizedBox(
+                            height: 9.0,
+                          ),
 
-                        Row(
-                          children: <Widget>[
-                            Text(
-                              'Forgot your login details ?',
-                              style: new TextStyle(
-                                  fontSize: 10.0, color: Colors.white),
-                            ),
-                            SizedBox(
-                              width: 2.0,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                UrlLauncher.launch("mailto:info@zartek.in");
-                              },
-                              child: Text(
-                                  'Get in touch with your project manager',
-                                  style: new TextStyle(
-                                      fontSize: 10.0,
-                                      color: Color(0xff216693),
-                                      decoration: TextDecoration.underline)),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        Visibility(
-                            visible: wrong,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.error_outline,
-                                  color: Colors.red,
-                                  size: 10,
-                                ),
-                                Text('invalid user name or password',
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                'Forgot your login details ?',
+                                style: new TextStyle(
+                                    fontSize: 10.0, color: Colors.white),
+                              ),
+                              SizedBox(
+                                width: 2.0,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  UrlLauncher.launch("mailto:info@zartek.in");
+                                },
+                                child: Text(
+                                    'Get in touch with your project manager',
                                     style: new TextStyle(
-                                      fontSize: 10.0,
-                                      color: Colors.red,
-                                    ))
-                              ],
-                            )),
-                        SizedBox(
-                          height: 22,
-                        ),
+                                        fontSize: 10.0,
+                                        color: Color(0xff216693),
+                                        decoration: TextDecoration.underline)),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Visibility(
+                              visible: wrong,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red,
+                                    size: 10,
+                                  ),
+                                  Text('invalid user name or password',
+                                      style: new TextStyle(
+                                        fontSize: 10.0,
+                                        color: Colors.red,
+                                      ))
+                                ],
+                              )),
+                          SizedBox(
+                            height: 22,
+                          ),
 
-                        //SizedBox(height: ,),
-                        Container(child: _showPrimaryButton()),
-                        SizedBox(
-                          height: 1,
-                        ),
+                          //SizedBox(height: ,),
+                          Container(child: _showPrimaryButton()),
+                          SizedBox(
+                            height: 1,
+                          ),
 
-                        _showText()
-                      ],
+                          _showText()
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

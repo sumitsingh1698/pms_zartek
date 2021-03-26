@@ -2,70 +2,99 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:zartek_pms/models/milestone.dart';
+import 'package:zartek_pms/models/project_status.dart';
+import 'package:zartek_pms/models/my_profile.dart';
+
 //Api
 class Apis {
-  String BASE_URL = "https://zartekpms.herokuapp.com/";
-  // login
-  Future<Map<String, dynamic>> registerUser({var body}) async {
-    final response = await http.post(
-      BASE_URL + "authenticate_client/",
-      body: json.encode(body),
-    );
-    print("gvg" + response.body.toString());
+  String BASE_URL = "https://zartek-pms.herokuapp.com/api/";
 
-    if (response.statusCode == 200) {
-      print('statuscode:'+response.statusCode.toString());
-      var responseJson = json.decode(response.body);
-      SharedPreferences prefs = await SharedPreferences.getInstance();
 
-      prefs.setString("token", responseJson['token']);
-      return responseJson;
-    } else {
-      // If that call was not successful, throw an error.
-
-      throw Exception('Failed to load post');
-    }
-  }
 
 //projects
-  Future Projects({var body}) async {
+  Future <List<Results>>Projects() async {
     SharedPreferences shared = await SharedPreferences.getInstance();
     String token = shared.getString("token");
     print('token_number$token');
 
-    var headers = {"Content-Type": "application/json", "Authorization": token};
+    var headers = {"Content-Type": "application/json", "Authorization": "token "+ token};
     print("json=$json");
-    print("hbh" + body.toString());
-    final response = await http.post(BASE_URL + "get_project/",
-        body: json.encode(body), headers: headers);
+
+    final response = await http.get(BASE_URL + "project/",
+        headers: headers);
     print("headers" + headers.toString());
     print("project :" + response.body);
     if (response.statusCode == 200) {
-      print('gzdbghsth' + response.body);
-
       var responseJson = json.decode(response.body);
+      print('gzdbghsth' + responseJson.toString());
+      return (responseJson['results'] as List).map((li) =>Results.fromJson(li)).toList();
 
-      return responseJson;
     } else {
       // If that call was not successful, throw an error.
       throw Exception('Failed to load post');
     }
   }
-
-  //milestone
-  Future milestone({var body}) async {
+// invoices
+  Future <List<Invoices>>Invoice() async {
     SharedPreferences shared = await SharedPreferences.getInstance();
     String token = shared.getString("token");
-    var headers = {"Content-Type": "application/json", "Authorization": token};
+    print('token_number$token');
+
+    var headers = {"Content-Type": "application/json", "Authorization": "token "+ token};
     print("json=$json");
-    print("hbh" + body.toString());
-    final response = await http.post(BASE_URL + "get_milestone/",
-        body: json.encode(body), headers: headers);
+
+    final response = await http.get(BASE_URL + "project/",
+        headers: headers);
+    print("headers" + headers.toString());
+    print("project :" + response.body);
+    if (response.statusCode == 200) {
+      var responseJson = json.decode(response.body);
+      print('gzdbghsth' + responseJson.toString());
+      return (responseJson['results'][0]['invoices'] as List).map((li) =>Invoices.fromJson(li)).toList();
+
+    } else {
+      // If that call was not successful, throw an error.
+      throw Exception('Failed to load post');
+    }
+  }
+  //documents
+  Future <List<Document>>Documents() async {
+    SharedPreferences shared = await SharedPreferences.getInstance();
+    String token = shared.getString("token");
+    print('token_number$token');
+
+    var headers = {"Content-Type": "application/json", "Authorization": "token "+ token};
+    print("json=$json");
+
+    final response = await http.get(BASE_URL + "project/",
+        headers: headers);
+    print("headers" + headers.toString());
+    print("project :" + response.body);
+    if (response.statusCode == 200) {
+      var responseJson = json.decode(response.body);
+      print('gzdbghsth' + responseJson.toString());
+      return (responseJson['results'][0]['document'] as List).map((li) =>Document.fromJson(li)).toList();
+
+    } else {
+      // If that call was not successful, throw an error.
+      throw Exception('Failed to load post');
+    }
+  }
+  //milestone
+  Future <List<Milestone>>milestone() async {
+    SharedPreferences shared = await SharedPreferences.getInstance();
+    String token = shared.getString("token");
+    var headers = {"Content-Type": "application/json", "Authorization": "token "+ token};
+    print("json=$json");
+
+    final response = await http.get(BASE_URL + "milestone/",
+         headers: headers);
     print("milestone :" + response.body);
     if (response.statusCode == 200) {
       print('gzdbghsth' + response.body);
       var responseJson = json.decode(response.body);
-      return responseJson;
+      return (responseJson['milestone'] as List).map((li) =>Milestone.fromJson(li)).toList();
     } else {
       // If that call was not successful, throw an error.
       throw Exception('Failed to load post');
@@ -73,19 +102,19 @@ class Apis {
   }
 
   //client details
-  Future profile({var body}) async {
+  Future <Myprofile>profile() async {
     SharedPreferences shared = await SharedPreferences.getInstance();
     String token = shared.getString("token");
-    var headers = {"Content-Type": "application/json", "Authorization": token};
+    var headers = {"Content-Type": "application/json", "Authorization":"token "+ token};
     print("json=$json");
-    print("hbh" + body.toString());
-    final response = await http.post(BASE_URL + "client_details/",
-        body: json.encode(body), headers: headers);
+
+    final response = await http.get(BASE_URL + "users/me/",
+         headers: headers);
     print("profile :" + response.body);
     if (response.statusCode == 200) {
       print('gzdbghsth' + response.body);
       var responseJson = json.decode(response.body);
-      return responseJson;
+      return Myprofile.fromJson(responseJson);
     } else {
       // If that call was not successful, throw an error.
       throw Exception('Failed to load post');

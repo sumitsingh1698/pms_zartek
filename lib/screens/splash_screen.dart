@@ -88,12 +88,26 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (tok == null) {
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Login()));
+          context, MaterialPageRoute(builder: (context) =>
+
+
+          Login()
+
+
+
+
+      ));
       //signed out
     } else {
       //signed in
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Home()));
+          context, MaterialPageRoute(builder: (context) =>
+          Home()
+
+
+
+
+      ));
     }
   }
 }

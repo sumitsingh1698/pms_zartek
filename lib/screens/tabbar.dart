@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:zartek_pms/screens/details_screen.dart';
 import 'package:zartek_pms/screens/help_and_support.dart';
@@ -10,10 +12,11 @@ class Myorders extends StatefulWidget {
   String projectid;
   String projectname;
   String number;
+String files;
 
   Myorders({
     Key key,
-    @required this.projectid,this.emailid,this.projectname,this.number
+    @required this.projectid,this.emailid,this.projectname,this.number,this.files
   }) : super(key: key);
 
   @override
@@ -27,6 +30,7 @@ class Myorders extends StatefulWidget {
 class MyordersState extends State<Myorders>
     with SingleTickerProviderStateMixin {
   String projectid;
+  String PaymentStatus;
   String emailid;
   String projectname;
   String number;
@@ -41,6 +45,7 @@ class MyordersState extends State<Myorders>
   @override
   void initState() {
     super.initState();
+    print(widget.files);
     controller = new TabController(vsync: this, length: 2);
   }
 
@@ -132,7 +137,7 @@ centerTitle: false,
         controller: controller,
         children: <Widget>[
           MyHome(userId: emailid,projectid: projectid,projectName: projectname,),
-          Details(projectID: projectid,),
+          Details(files: jsonDecode(widget.files)),
         ],
       ),
     );

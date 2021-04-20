@@ -117,7 +117,9 @@ class CardView extends State<CardV> {
                                                     .data[index].id
                                                     .toString(),
                                                 number: snapshot.data[index]
-                                                    .projectmanagerNumber,files: jsonEncode(snapshot.data[index].document),
+                                                    .projectmanagerNumber,
+                                                files: jsonEncode(snapshot
+                                                    .data[index].document),
                                               ),
                                               withNavBar: false,
                                             );
@@ -141,9 +143,10 @@ class CardView extends State<CardV> {
                                             _onRefresh();
                                             setState(() {
                                               FlutterLaunch.launchWathsApp(
-                                                  phone:snapshot.data[index]
+                                                  phone: snapshot.data[index]
                                                       .projectmanagerNumber,
-                                                 message: "Hello  I have some feedback regarding my project");
+                                                  message:
+                                                      "Hello  I have some feedback regarding my project");
                                             });
 
                                             // FlutterOpenWhatsapp.sendSingleMessage(project[index].managerNumber , "Hello  I have some feedback regarding my project");
@@ -227,53 +230,47 @@ class CardView extends State<CardV> {
                                                                       .normal,
                                                               fontSize: 18.0)),
 
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    top: 0.0),
-                                                            child: Text(
-                                                              'Status:',
-                                                              style: const TextStyle(
-                                                                  color: const Color(
-                                                                      0xff1e88c6),
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  fontFamily:
-                                                                      "Roboto",
-                                                                  fontStyle:
-                                                                      FontStyle
-                                                                          .normal,
-                                                                  fontSize:
-                                                                      13.0),
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .left,
-                                                            ),
+
+                                                      RichText(
+                                                        textAlign:
+                                                            TextAlign.start,
+                                                        text:
+                                                            TextSpan(children: <
+                                                                TextSpan>[
+                                                          TextSpan(
+                                                            text:
+                                                                ('Description :'),
+                                                            style: const TextStyle(
+                                                                color: const Color(
+                                                                    0xff1e88c6),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                fontFamily:
+                                                                    "Roboto",
+                                                                fontStyle:
+                                                                    FontStyle
+                                                                        .normal,
+                                                                fontSize: 13.0),
                                                           ),
-                                                          Container(
-                                                            child: Text(
-                                                                snapshot
-                                                                    .data[index]
-                                                                    .description,
-                                                                style: const TextStyle(
-                                                                    color: const Color(
-                                                                        0xff1e88c6),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
-                                                                    fontFamily:
-                                                                        "Roboto",
-                                                                    fontStyle:
-                                                                        FontStyle
-                                                                            .normal,
-                                                                    fontSize:
-                                                                        13.0)),
-                                                          )
-                                                        ],
+                                                          TextSpan(
+                                                            text: snapshot
+                                                                .data[index]
+                                                                .description,
+                                                            style: const TextStyle(
+                                                                color: const Color(
+                                                                    0xff1e88c6),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                fontFamily:
+                                                                    "Roboto",
+                                                                fontStyle:
+                                                                    FontStyle
+                                                                        .normal,
+                                                                fontSize: 13.0),
+                                                          ),
+                                                        ]),
                                                       ),
                                                       Row(
                                                         children: <Widget>[
@@ -283,7 +280,7 @@ class CardView extends State<CardV> {
                                                                         .only(
                                                                     top: 0.0),
                                                             child: Text(
-                                                              'Milestone Date :',
+                                                              'Start Date :',
                                                               style: const TextStyle(
                                                                   color: const Color(
                                                                       0xff1e88c6),
@@ -426,93 +423,94 @@ class CardView extends State<CardV> {
                                                       SizedBox(
                                                         height: 5.0,
                                                       ),
-                                                      Row(
-
-                                                          children: <Widget>[
-                                                            Expanded(
-                                                              child: Visibility(
-                                                                visible: snapshot
-                                                                            .data[index]
-                                                                            .dropboxLink ==
-                                                                        ""
-                                                                    ? false
-                                                                    : true,
-                                                                child:
-                                                                    Container(
-                                                                  height: 18.0,
-                                                                  width: 1.0,
-                                                                  child:
-                                                                      FlatButton(
-                                                                    color: Color(
-                                                                        0xFFE3F2FD),
-                                                                    child: Row(
-                                                                      children: [
-                                                                        Text(
-                                                                          'DropBox Link',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontSize:
-                                                                                15,
-                                                                            color:
-                                                                                Color(0xff1e88c6),
-                                                                            fontWeight:
-                                                                                FontWeight.w500,
-                                                                            decoration:
-                                                                                TextDecoration.underline,
-                                                                          ),
-                                                                        ),
-                                                                      ],
+                                                      Row(children: <Widget>[
+                                                        Expanded(
+                                                          child: Visibility(
+                                                            visible: snapshot
+                                                                        .data[
+                                                                            index]
+                                                                        .dropboxLink ==
+                                                                    ""
+                                                                ? false
+                                                                : true,
+                                                            child: Container(
+                                                              height: 18.0,
+                                                              width: 1.0,
+                                                              child: FlatButton(
+                                                                color: Color(
+                                                                    0xFFE3F2FD),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      'DropBox Link',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            15,
+                                                                        color: Color(
+                                                                            0xff1e88c6),
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                        decoration:
+                                                                            TextDecoration.underline,
+                                                                      ),
                                                                     ),
-                                                                    onPressed:
-                                                                        () {
-                                                                      pushNewScreen(
-                                                                        context,
-                                                                        screen:
-                                                                            Webview(
-                                                                          url: snapshot
-                                                                              .data[index]
-                                                                              .dropboxLink,
-                                                                        ),
-                                                                        withNavBar:
-                                                                            false,
-                                                                      );
-                                                                    },
-                                                                  ),
+                                                                  ],
                                                                 ),
+                                                                onPressed: () {
+                                                                  pushNewScreen(
+                                                                    context,
+                                                                    screen:
+                                                                        Webview(
+                                                                      url: snapshot
+                                                                          .data[
+                                                                              index]
+                                                                          .dropboxLink,
+                                                                    ),
+                                                                    withNavBar:
+                                                                        false,
+                                                                  );
+                                                                },
                                                               ),
                                                             ),
-                                                            snapshot.data[index]
-                                                                        .completedStatus ==
-                                                                    100
-                                                                ? Text(
-                                                                    snapshot.data[index]
-                                                                            .completedStatus
-                                                                            .toString() +
-                                                                        '% Completed',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w300,
-                                                                        fontSize:
-                                                                            14.0,
-                                                                        color: Colors
-                                                                            .green),
-                                                                  )
-                                                                : Text(
-                                                                    snapshot.data[index]
-                                                                            .completedStatus
-                                                                            .toString() +
-                                                                        '% Completed',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w300,
-                                                                        fontSize:
-                                                                            14.0,
-                                                                        color: Color(
-                                                                            0xff1e88c6)),
-                                                                  ),
-                                                          ]),
+                                                          ),
+                                                        ),
+                                                        snapshot.data[index]
+                                                                    .completedStatus ==
+                                                                100
+                                                            ? Text(
+                                                                snapshot
+                                                                        .data[
+                                                                            index]
+                                                                        .completedStatus
+                                                                        .toString() +
+                                                                    '% Completed',
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w300,
+                                                                    fontSize:
+                                                                        14.0,
+                                                                    color: Colors
+                                                                        .green),
+                                                              )
+                                                            : Text(
+                                                                snapshot
+                                                                        .data[
+                                                                            index]
+                                                                        .completedStatus
+                                                                        .toString() +
+                                                                    '% Completed',
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w300,
+                                                                    fontSize:
+                                                                        14.0,
+                                                                    color: Color(
+                                                                        0xff1e88c6)),
+                                                              ),
+                                                      ]),
                                                     ],
                                                   ),
                                                 ),

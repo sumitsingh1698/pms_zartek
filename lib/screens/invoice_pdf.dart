@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,9 +7,10 @@ import 'package:http/http.dart' as http;
 
 import 'package:path_provider/path_provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:zartek_pms/models/milestone.dart';
 import 'package:zartek_pms/models/project_status.dart';
-import 'package:zartek_pms/screens/help_and_support.dart';
+import 'package:zartek_pms/pdf_viewer/pdf_viewer.dart';
 import 'package:zartek_pms/services/apis.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -31,8 +33,8 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
     getFileFromUrl(
-//     "https://firebasestorage.googleapis.com/v0/b/list-66122.appspot.com/o/Project1%2F1103181300431510Time%20And%20Work%20.pdf?alt=media&token=d34092b9-2391-47c4-aafb-db9963d770d7"
-        'ashik').then((f) {
+            "https://firebasestorage.googleapis.com/v0/b/list-66122.appspot.com/o/Project1%2F1103181300431510Time%20And%20Work%20.pdf?alt=media&token=d34092b9-2391-47c4-aafb-db9963d770d7")
+        .then((f) {
       setState(() {
         urlpdfPath = f.path;
         print(urlpdfPath);
@@ -41,8 +43,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
     var body = {"project_id": widget.projectid};
     print('gggggggggg' + body.toString());
-
-
   }
 
   List<Milestone> milestone = [];
@@ -51,142 +51,100 @@ class _MyHomePageState extends State<MyHomePage> {
       var data = await http.get(url);
       var bytes = data.bodyBytes;
       var dir = await getApplicationDocumentsDirectory();
-      File file = File("${dir.path}/pdf");
+      File file = File("${dir.path}/pdf.pdf");
       File urlFile = await file.writeAsBytes(bytes);
+      print(urlFile.path);
       return urlFile;
     } catch (e) {
+      log("ERROR IN PAYMENT URL" + e.toString());
       throw Exception("error opening url file");
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-          appBar: AppBar(
-              backgroundColor: Colors.white,
-              title: Text(
-                widget.projectname,
-                style: const TextStyle(
-                    color: Color(0xff1e88c6),
-                    fontWeight: FontWeight.w400,
-                    fontFamily: "Roboto",
-                    fontStyle: FontStyle.normal,
-                    fontSize: 20.0),
-              ),
-              leading: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: Color(0xff1e88c6),
-                ),
-                onPressed: () => Navigator.pop(context, false),
-              )),
-          floatingActionButton: Container(
-            height: 70.0,
-            width: 70.0,
-            child: FittedBox(
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Help(
-                              mail: widget.number,
-                            )),
-                  );
-                },
-                child: Column(
-                  children: <Widget>[
-                    CircleAvatar(
-                        backgroundColor: Color(0xFFE3F2FD),
-                        child: Icon(
-                          Icons.chat,
-                          color: Color(0xff1e88c6),
-                        )),
-                    // Container(
-                    //
-                    Row(
-                      children: <Widget>[
-                        Text('Raise your concerns',
-                            style: const TextStyle(
-                                color: const Color(0xff1e88c6),
-                                fontWeight: FontWeight.w600,
-                                fontFamily: "Roboto",
-                                fontStyle: FontStyle.normal,
-                                fontSize: 8.0)),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-          body:  FutureBuilder<List<Invoices>>(
-              future: Apis().Invoice(),
-              builder: (context, snapshot) {
-                print('snapshot data' + snapshot.data.toString());
-                if (!snapshot.hasData)
-                  return Center(
-                      child: CircularProgressIndicator(
-                          valueColor: new AlwaysStoppedAnimation<Color>(
-                              Color(0xff1e88c6))));
-                return snapshot.data.length==0?Center( child: Text('No Invoices',
-                    style: const TextStyle(
-                        color: const Color(0xff1e88c6),
-                        fontWeight: FontWeight.w400,
-                        fontFamily: "Roboto",
-                        fontStyle: FontStyle.normal,
-                        fontSize: 18.0)),): ListView.separated(
-                    separatorBuilder: (context, index) =>
-                        Divider(color: Colors.black12),
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    scrollDirection: Axis.vertical,
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return  ListTile(
-                        leading: Icon(
-                          Icons.picture_as_pdf,
-                          color: const Color(0xFFD50000),
-                        ),
-                        title: Text(snapshot.data[index].name,style: const TextStyle(
-                            color: const Color(0xff1e88c6),
-                            fontWeight: FontWeight.w400,
-                            fontFamily: "Roboto",
-                            fontStyle: FontStyle.normal,
-                            fontSize: 18.0)),
-                        onTap: () {
-                          if (snapshot.data[index].invoice != null) {
-                            Fluttertoast.showToast(
-                                msg: 'Loading...',
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM,
-                                timeInSecForIos: 1,
-                                backgroundColor: Colors.white10,
-                                textColor: Colors.black,
-                                fontSize: 15.0);
+    return FutureBuilder<List<Invoices>>(
+        future: Apis().Invoice(),
+        builder: (context, snapshot) {
+          print('snapshot data' + snapshot.data.toString());
+          if (!snapshot.hasData)
+            return Center(
+                child: CircularProgressIndicator(
+                    valueColor:
+                        new AlwaysStoppedAnimation<Color>(Color(0xff1e88c6))));
+          return snapshot.data.length == 0
+              ? Center(
+                  child: Text('No Invoices',
+                      style: const TextStyle(
+                          color: const Color(0xff1e88c6),
+                          fontWeight: FontWeight.w400,
+                          fontFamily: "Roboto",
+                          fontStyle: FontStyle.normal,
+                          fontSize: 18.0)),
+                )
+              : ListView.separated(
+                  separatorBuilder: (context, index) =>
+                      Divider(color: Colors.black12),
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  scrollDirection: Axis.vertical,
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      leading: Icon(
+                        Icons.picture_as_pdf,
+                        color: const Color(0xFFD50000),
+                      ),
+                      title: Text(snapshot.data[index].name,
+                          style: const TextStyle(
+                              color: const Color(0xff1e88c6),
+                              fontWeight: FontWeight.w400,
+                              fontFamily: "Roboto",
+                              fontStyle: FontStyle.normal,
+                              fontSize: 18.0)),
+                      onTap: () {
+                        if (snapshot.data[index].invoice != null) {
+                          // Fluttertoast.showToast(
+                          //     msg: 'Loading...',
+                          //     toastLength: Toast.LENGTH_SHORT,
+                          //     gravity: ToastGravity.BOTTOM,
+                          //     timeInSecForIos: 1,
+                          //     backgroundColor: Colors.white10,
+                          //     textColor: Colors.black,
+                          //     fontSize: 15.0);
 
-                            getFileFromUrl(snapshot.data[index].invoice)
-                                .then((f) {
-                              setState(() {
-                                urlpdfPath = f.path;
-                                print(urlpdfPath);
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => PdfViewPage(
-                                        path: urlpdfPath,
-                                        projectname: widget.projectname,
-                                      ),
-                                    ));
-                              });
-                            });
-                          }
-                        },
-                      );
-                    });
-              }),
-        );
+                          pushNewScreen(context,
+                              screen: MyPDFView(
+                                snapshot.data[index].invoice,
+                              ),
+                              withNavBar: false);
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder: (context) => ,
+                          //     ));
+
+                          // getFileFromUrl(snapshot.data[index].invoice)
+                          //     .then((f) {
+                          //   setState(() {
+                          //     urlpdfPath = f.path;
+                          //     print(urlpdfPath);
+                          //     Navigator.push(
+                          //         context,
+                          //         MaterialPageRoute(
+                          //           builder: (context) => PdfViewPage(
+                          //             path: urlpdfPath,
+                          //             projectname: widget.projectname,
+                          //           ),
+                          //         ));
+                          //   });
+                          // });
+                        }
+                      },
+                    );
+                  });
+        });
+    // );
   }
 }
 
@@ -232,6 +190,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
         print('page change: $page/$total');
       },
     );
+
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Colors.white,
@@ -256,10 +215,9 @@ class _PdfViewPageState extends State<PdfViewPage> {
           pdfView,
           !pdfReady
               ? Center(
-              child: CircularProgressIndicator(
-                  valueColor: new AlwaysStoppedAnimation<Color>(
-                      Color(0xff1e88c6)))
-                )
+                  child: CircularProgressIndicator(
+                      valueColor:
+                          new AlwaysStoppedAnimation<Color>(Color(0xff1e88c6))))
               : Offstage()
         ],
       ),

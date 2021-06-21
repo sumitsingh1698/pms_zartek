@@ -1,26 +1,25 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_launch/flutter_launch.dart';
-import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:zartek_pms/utils/whatup_launcher.dart';
 
 import '../services/apis.dart';
 
 class Help extends StatefulWidget {
   String mail;
-  String project=""
-;  Help({this.mail,this.project});
+  String project = "";
+  Help({this.mail, this.project});
   @override
   _HelpState createState() => _HelpState();
 }
 
 class _HelpState extends State<Help> {
-  String project= "";
-  String msga="I want to add a new feature";
-  String msgb= "There is a bug in the app";
-  String msgc=  "I want to modify the ui design";
+  String project = "";
+  String msga = "I want to add a new feature";
+  String msgb = "There is a bug in the app";
+  String msgc = "I want to modify the ui design";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,9 +54,9 @@ class _HelpState extends State<Help> {
                 children: <Widget>[
                   Container(
                     color: Colors.white,
-                  child:  Column(
-                    children: <Widget>[
-                      Row(
+                    child: Column(
+                      children: <Widget>[
+                        Row(
                           children: <Widget>[
                             Expanded(
                               child: Padding(
@@ -78,99 +77,95 @@ class _HelpState extends State<Help> {
                                   color: Color(0xff1e88c6),
                                   size: 25.0,
                                 ),
-                                onPressed: ()  {
-
-
-                                  FlutterLaunch.launchWathsApp(phone:widget.mail ,message: msga);
-
-                                }
-
-                                ),
+                                onPressed: () {
+                                  // FlutterLaunch.launchWathsApp(
+                                  //     phone: widget.mail, message: msga);
+                                  launch(urlWhatup(
+                                      phone: widget.mail, message: msga));
+                                }),
                           ],
                         ),
-                      Container(
-                        decoration: BoxDecoration(
-                          //                    <-- BoxDecoration
-                          border: Border(
-                              bottom: BorderSide(color: Colors.black12)),
+                        Container(
+                          decoration: BoxDecoration(
+                            //                    <-- BoxDecoration
+                            border: Border(
+                                bottom: BorderSide(color: Colors.black12)),
+                          ),
                         ),
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                msgb,
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff1e88c6),
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  msgb,
+                                  style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xff1e88c6),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          IconButton(
-                              icon: Icon(
-                                Icons.keyboard_arrow_right,
-                                color: Color(0xff1e88c6),
-                                size: 25.0,
-                              ),
-                              onPressed: ()  {
-
-
-                                FlutterLaunch.launchWathsApp(phone:widget.mail ,message: msgb);
-
-                              }),
-                        ],
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          //                    <-- BoxDecoration
-                          border: Border(
-                              bottom: BorderSide(color: Colors.black12)),
-                        ),
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                msgc,
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w600,
+                            IconButton(
+                                icon: Icon(
+                                  Icons.keyboard_arrow_right,
                                   color: Color(0xff1e88c6),
+                                  size: 25.0,
+                                ),
+                                onPressed: () {
+                                  // FlutterLaunch.launchWathsApp(
+                                  //     phone: widget.mail, message: msgb);
+                                  launch(urlWhatup(
+                                      phone: widget.mail, message: msgb));
+                                }),
+                          ],
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            //                    <-- BoxDecoration
+                            border: Border(
+                                bottom: BorderSide(color: Colors.black12)),
+                          ),
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  msgc,
+                                  style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xff1e88c6),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          IconButton(
-                              icon: Icon(
-                                Icons.keyboard_arrow_right,
-                                color: Color(0xff1e88c6),
-                                size: 25.0,
-                              ),
-                              onPressed: ()  {
-
-
-                                FlutterLaunch.launchWathsApp(phone:widget.mail ,message: msgc);
-
-                              }),
-                        ],
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          //                    <-- BoxDecoration
-                          border: Border(
-                              bottom: BorderSide(color: Colors.black12)),
+                            IconButton(
+                                icon: Icon(
+                                  Icons.keyboard_arrow_right,
+                                  color: Color(0xff1e88c6),
+                                  size: 25.0,
+                                ),
+                                onPressed: () {
+                                  // FlutterLaunch.launchWathsApp(
+                                  //     phone: widget.mail, message: msgc);
+                                  launch(urlWhatup(
+                                      phone: widget.mail, message: msgc));
+                                }),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-
-
+                        Container(
+                          decoration: BoxDecoration(
+                            //                    <-- BoxDecoration
+                            border: Border(
+                                bottom: BorderSide(color: Colors.black12)),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -194,18 +189,13 @@ class _HelpState extends State<Help> {
         ]));
   }
 
-
-
-
-
-
-
   void whatsAppOpen() async {
     SharedPreferences shared = await SharedPreferences.getInstance();
     String Message = "";
     String number = shared.getString("number");
-    await FlutterLaunch.launchWathsApp(
-        phone: number ,
-        message: Message);
+
+    // await FlutterLaunch.launchWathsApp(phone: number, message: Message);
+
+    await launch(urlWhatup(phone: number, message: Message));
   }
 }

@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zartek_pms/bottomnavbar/home_widget.dart';
 import 'package:zartek_pms/screens/login.dart';
 
-
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -28,16 +27,18 @@ class _SplashScreenState extends State<SplashScreen> {
         fit: StackFit.expand,
         children: <Widget>[
           Container(
-            decoration: BoxDecoration(gradient: LinearGradient(
-              colors: [
-                Color(0xFFACC9DB),
-                // Color(0xFF78A7C5),
-                Color(0xFF256EA1),
-              ],
-              stops: [0.1,2.0],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFFACC9DB),
+                  // Color(0xFF78A7C5),
+                  Color(0xFF256EA1),
+                ],
+                stops: [0.1, 2.0],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -52,15 +53,15 @@ class _SplashScreenState extends State<SplashScreen> {
                         Padding(
                           padding: EdgeInsets.only(top: 120.0),
                         ),
-                       Container(
-                         height: 90.0,
-                         width: 155.0,
-                         decoration: BoxDecoration(image: DecorationImage(
-                         image: AssetImage('images/logo.png'),fit: BoxFit.contain
-
-                       ),
-                         shape: BoxShape.rectangle
-                       ),)
+                        Container(
+                          height: 90.0,
+                          width: 155.0,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: AssetImage('images/logo.png'),
+                                  fit: BoxFit.contain),
+                              shape: BoxShape.rectangle),
+                        )
                       ],
                     ),
                   ),
@@ -70,9 +71,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 flex: 1,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-
-                  ],
+                  children: <Widget>[],
                 ),
               )
             ],
@@ -88,26 +87,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (tok == null) {
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) =>
-
-
-          Login()
-
-
-
-
-      ));
+          context, MaterialPageRoute(builder: (context) => Login()));
       //signed out
     } else {
       //signed in
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) =>
-          Home()
-
-
-
-
-      ));
+          context, MaterialPageRoute(builder: (context) => Home()));
     }
   }
 }

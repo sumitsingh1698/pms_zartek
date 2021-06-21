@@ -7,7 +7,7 @@ import 'package:zartek_pms/screens/splash_screen.dart';
 
 //import 'package:percent_indicator/circular_percent_indicator.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterDownloader.initialize(debug: debug);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
@@ -17,7 +17,6 @@ void main() async{
 }
 
 class MyApp extends StatelessWidget {
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

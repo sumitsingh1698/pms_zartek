@@ -1,23 +1,19 @@
 import 'dart:convert';
 
-import 'package:flutter/gestures.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_launch/flutter_launch.dart';
-import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zartek_pms/models/project_status.dart';
-import 'package:zartek_pms/progressbar/progress_bar.dart';
 import 'package:zartek_pms/screens/invoice_pdf.dart';
-import 'package:zartek_pms/screens/status.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:zartek_pms/screens/tabbar.dart';
 import 'package:zartek_pms/services/apis.dart';
+import 'package:zartek_pms/utils/whatup_launcher.dart';
 
 enum ProjectPages { project, invoice, feedback }
 //list item
@@ -102,6 +98,21 @@ class CardView extends State<CardV> {
                                   builder: (context, setModelState) {
                                 int p = snapshot.data[index].completedStatus;
                                 i = (p / 100);
+
+                                ///----------------------------------------//
+                                ///addded by sumit
+                                if (widget.page == ProjectPages.invoice) {
+                                  return MyHomePage(
+                                    projectname: snapshot.data[index].project,
+                                    projectid:
+                                        snapshot.data[index].id.toString(),
+                                    number: snapshot
+                                        .data[index].projectmanagerNumber,
+                                  );
+                                }
+
+                                ///----------------------------------------//
+
                                 return Column(
                                   children: <Widget>[
                                     GestureDetector(
@@ -142,66 +153,28 @@ class CardView extends State<CardV> {
                                               ProjectPages.feedback) {
                                             _onRefresh();
                                             setState(() {
-                                              FlutterLaunch.launchWathsApp(
+                                              //   FlutterLaunch.launchWathsApp(
+                                              //       phone: snapshot.data[index]
+                                              //           .projectmanagerNumber,
+                                              //       message:
+                                              //           "Hello  I have some feedback regarding my project");
+                                              // });
+
+                                              launch(urlWhatup(
                                                   phone: snapshot.data[index]
                                                       .projectmanagerNumber,
                                                   message:
-                                                      "Hello  I have some feedback regarding my project");
+                                                      "Hello  I have some feedback regarding my project"));
                                             });
-
-                                            // FlutterOpenWhatsapp.sendSingleMessage(project[index].managerNumber , "Hello  I have some feedback regarding my project");
                                           }
                                         },
-                                        child: Card(
+                                        child: Container(
                                             margin: const EdgeInsets.symmetric(
                                                 vertical: 10.0,
                                                 horizontal: 10.0),
-                                            shape: new RoundedRectangleBorder(
-                                              borderRadius:
-                                                  new BorderRadius.circular(
-                                                      20.0),
-                                            ),
                                             child: Column(
                                               children: <Widget>[
                                                 Container(
-                                                  // width: 340,
-                                                  // height: 149,
-                                                  constraints:
-                                                      BoxConstraints.expand(
-                                                          height: 150.0),
-                                                  decoration: new BoxDecoration(
-                                                    // boxShadow: [
-                                                    //   new BoxShadow(
-                                                    //     color: Colors.black,
-                                                    //     blurRadius: 10.0,
-                                                    //     offset: new Offset(
-                                                    //         3.0, 3.0),
-                                                    //   )
-                                                    // ],
-                                                    borderRadius:
-                                                        new BorderRadius.only(
-                                                      topLeft:
-                                                          const Radius.circular(
-                                                              18.0),
-                                                      bottomLeft:
-                                                          const Radius.circular(
-                                                              8.0),
-                                                      topRight:
-                                                          const Radius.circular(
-                                                              18.0),
-                                                      bottomRight:
-                                                          const Radius.circular(
-                                                              8.0),
-                                                    ),
-                                                    gradient:
-                                                        new LinearGradient(
-                                                      colors: [
-                                                        const Color(0xFFE3F2FD)
-                                                      ],
-                                                      stops: [0.0],
-                                                      // tileMode: TileMode.repeated
-                                                    ),
-                                                  ),
                                                   padding: EdgeInsets.all(8.0),
                                                   child: Column(
                                                     mainAxisAlignment:
@@ -222,15 +195,32 @@ class CardView extends State<CardV> {
                                                                   0xff1e88c6),
                                                               fontWeight:
                                                                   FontWeight
-                                                                      .w400,
+                                                                      .w500,
                                                               fontFamily:
                                                                   "Roboto",
                                                               fontStyle:
                                                                   FontStyle
                                                                       .normal,
-                                                              fontSize: 18.0)),
-
-
+                                                              fontSize: 25.0)),
+                                                      SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      Text("Description :",
+                                                          style: const TextStyle(
+                                                              color: const Color(
+                                                                  0xff1e88c6),
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              fontFamily:
+                                                                  "Roboto",
+                                                              fontStyle:
+                                                                  FontStyle
+                                                                      .normal,
+                                                              fontSize: 17.0)),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
                                                       RichText(
                                                         textAlign:
                                                             TextAlign.start,
@@ -238,28 +228,12 @@ class CardView extends State<CardV> {
                                                             TextSpan(children: <
                                                                 TextSpan>[
                                                           TextSpan(
-                                                            text:
-                                                                ('Description :'),
-                                                            style: const TextStyle(
-                                                                color: const Color(
-                                                                    0xff1e88c6),
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                fontFamily:
-                                                                    "Roboto",
-                                                                fontStyle:
-                                                                    FontStyle
-                                                                        .normal,
-                                                                fontSize: 13.0),
-                                                          ),
-                                                          TextSpan(
                                                             text: snapshot
                                                                 .data[index]
                                                                 .description,
                                                             style: const TextStyle(
                                                                 color: const Color(
-                                                                    0xff1e88c6),
+                                                                    0xff9e9e9e),
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w400,
@@ -268,56 +242,12 @@ class CardView extends State<CardV> {
                                                                 fontStyle:
                                                                     FontStyle
                                                                         .normal,
-                                                                fontSize: 13.0),
+                                                                fontSize: 17.0),
                                                           ),
                                                         ]),
                                                       ),
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    top: 0.0),
-                                                            child: Text(
-                                                              'Start Date :',
-                                                              style: const TextStyle(
-                                                                  color: const Color(
-                                                                      0xff1e88c6),
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  fontFamily:
-                                                                      "Roboto",
-                                                                  fontStyle:
-                                                                      FontStyle
-                                                                          .normal,
-                                                                  fontSize:
-                                                                      13.0),
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .left,
-                                                            ),
-                                                          ),
-                                                          //status
-                                                          Text(
-                                                              snapshot
-                                                                  .data[index]
-                                                                  .startDate,
-                                                              style: const TextStyle(
-                                                                  color: const Color(
-                                                                      0xff1e88c6),
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  fontFamily:
-                                                                      "Roboto",
-                                                                  fontStyle:
-                                                                      FontStyle
-                                                                          .normal,
-                                                                  fontSize:
-                                                                      13.0))
-                                                        ],
+                                                      SizedBox(
+                                                        height: 10.0,
                                                       ),
                                                       Row(
                                                         children: <Widget>[
@@ -327,10 +257,10 @@ class CardView extends State<CardV> {
                                                                         .only(
                                                                     top: 0.0),
                                                             child: Text(
-                                                              'End Date :',
+                                                              'Start Date : ',
                                                               style: const TextStyle(
                                                                   color: const Color(
-                                                                      0xff1e88c6),
+                                                                      0xff9e9e9e),
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w400,
@@ -340,7 +270,7 @@ class CardView extends State<CardV> {
                                                                       FontStyle
                                                                           .normal,
                                                                   fontSize:
-                                                                      13.0),
+                                                                      17.0),
                                                               textAlign:
                                                                   TextAlign
                                                                       .left,
@@ -348,12 +278,23 @@ class CardView extends State<CardV> {
                                                           ),
                                                           //status
                                                           Text(
-                                                              snapshot
-                                                                  .data[index]
-                                                                  .endDate,
+                                                              snapshot.data[index].startDate ==
+                                                                      null
+                                                                  ? ""
+                                                                  : formatDate(
+                                                                      DateTime.parse(snapshot
+                                                                          .data[index]
+                                                                          .startDate),
+                                                                      [
+                                                                          dd,
+                                                                          " ",
+                                                                          M,
+                                                                          " ",
+                                                                          yyyy
+                                                                        ]),
                                                               style: const TextStyle(
                                                                   color: const Color(
-                                                                      0xff1e88c6),
+                                                                      0xff9e9e9e),
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w400,
@@ -363,65 +304,73 @@ class CardView extends State<CardV> {
                                                                       FontStyle
                                                                           .normal,
                                                                   fontSize:
-                                                                      13.0))
+                                                                      17.0))
                                                         ],
-                                                      ),
-                                                      Visibility(
-                                                        visible: widget.page ==
-                                                                ProjectPages
-                                                                    .invoice
-                                                            ? false
-                                                            : true,
-                                                        child: Row(
-                                                          children: <Widget>[
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .only(
-                                                                      top: 0.0),
-                                                              child: Text(
-                                                                'Payment Status :',
-                                                                style: const TextStyle(
-                                                                    color: const Color(
-                                                                        0xff1e88c6),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
-                                                                    fontFamily:
-                                                                        "Roboto",
-                                                                    fontStyle:
-                                                                        FontStyle
-                                                                            .normal,
-                                                                    fontSize:
-                                                                        13.0),
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .left,
-                                                              ),
-                                                            ),
-                                                            //status
-                                                            Text(
-                                                                snapshot
-                                                                    .data[index]
-                                                                    .paymentStatus,
-                                                                style: const TextStyle(
-                                                                    color: const Color(
-                                                                        0xff1e88c6),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
-                                                                    fontFamily:
-                                                                        "Roboto",
-                                                                    fontStyle:
-                                                                        FontStyle
-                                                                            .normal,
-                                                                    fontSize:
-                                                                        13.0))
-                                                          ],
-                                                        ),
                                                       ),
                                                       SizedBox(
-                                                        height: 5.0,
+                                                        height: 10.0,
+                                                      ),
+                                                      Row(
+                                                        children: <Widget>[
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 0.0),
+                                                            child: Text(
+                                                              'End Date   : ',
+                                                              style: const TextStyle(
+                                                                  color: const Color(
+                                                                      0xff9e9e9e),
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  fontFamily:
+                                                                      "Roboto",
+                                                                  fontStyle:
+                                                                      FontStyle
+                                                                          .normal,
+                                                                  fontSize:
+                                                                      17.0),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .left,
+                                                            ),
+                                                          ),
+                                                          //status
+                                                          Text(
+                                                              snapshot.data[index].endDate ==
+                                                                      null
+                                                                  ? ""
+                                                                  : formatDate(
+                                                                      DateTime.parse(snapshot
+                                                                          .data[index]
+                                                                          .endDate),
+                                                                      [
+                                                                          dd,
+                                                                          " ",
+                                                                          M,
+                                                                          " ",
+                                                                          yyyy
+                                                                        ]),
+                                                              style: const TextStyle(
+                                                                  color: const Color(
+                                                                      0xff9e9e9e),
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  fontFamily:
+                                                                      "Roboto",
+                                                                  fontStyle:
+                                                                      FontStyle
+                                                                          .normal,
+                                                                  fontSize:
+                                                                      17.0))
+                                                        ],
+                                                      ),
+
+                                                      SizedBox(
+                                                        height: 50.0,
                                                       ),
                                                       Row(children: <Widget>[
                                                         Expanded(
@@ -437,8 +386,8 @@ class CardView extends State<CardV> {
                                                               height: 18.0,
                                                               width: 1.0,
                                                               child: FlatButton(
-                                                                color: Color(
-                                                                    0xFFE3F2FD),
+                                                                // color: Color(
+                                                                //     0xFFE3F2FD),
                                                                 child: Row(
                                                                   children: [
                                                                     Text(
@@ -446,11 +395,11 @@ class CardView extends State<CardV> {
                                                                       style:
                                                                           TextStyle(
                                                                         fontSize:
-                                                                            15,
+                                                                            17,
                                                                         color: Color(
                                                                             0xff1e88c6),
                                                                         fontWeight:
-                                                                            FontWeight.w500,
+                                                                            FontWeight.w400,
                                                                         decoration:
                                                                             TextDecoration.underline,
                                                                       ),
@@ -475,64 +424,128 @@ class CardView extends State<CardV> {
                                                             ),
                                                           ),
                                                         ),
-                                                        snapshot.data[index]
-                                                                    .completedStatus ==
-                                                                100
-                                                            ? Text(
-                                                                snapshot
-                                                                        .data[
-                                                                            index]
-                                                                        .completedStatus
-                                                                        .toString() +
-                                                                    '% Completed',
-                                                                style: TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w300,
-                                                                    fontSize:
-                                                                        14.0,
-                                                                    color: Colors
-                                                                        .green),
-                                                              )
-                                                            : Text(
-                                                                snapshot
-                                                                        .data[
-                                                                            index]
-                                                                        .completedStatus
-                                                                        .toString() +
-                                                                    '% Completed',
-                                                                style: TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w300,
-                                                                    fontSize:
-                                                                        14.0,
-                                                                    color: Color(
-                                                                        0xff1e88c6)),
-                                                              ),
                                                       ]),
+                                                      SizedBox(
+                                                        height: 30,
+                                                      ),
+                                                      Text("Progress",
+                                                          style: const TextStyle(
+                                                              color: const Color(
+                                                                  0xff1e88c6),
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              fontFamily:
+                                                                  "Roboto",
+                                                              fontStyle:
+                                                                  FontStyle
+                                                                      .normal,
+                                                              fontSize: 18.0)),
+                                                      SizedBox(height: 10),
+                                                      // LinearProgressIndicator(
+                                                      //   backgroundColor:
+                                                      //       Colors.red,
+                                                      //   valueColor:
+                                                      //       AlwaysStoppedAnimation<
+                                                      //           Color>(
+                                                      //     Colors.amber,
+                                                      //   ),
+                                                      //   value: 0.8,
+                                                      // ),
+                                                      Container(
+                                                        padding:
+                                                            EdgeInsets.all(1.0),
+                                                        color: const Color(
+                                                            0xff9e9e9e),
+                                                        child:
+                                                            LinearProgressIndicator(
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .white,
+                                                                valueColor:
+                                                                    AlwaysStoppedAnimation<
+                                                                        Color>(
+                                                                  const Color(
+                                                                      0xff1e88c6),
+                                                                ),
+                                                                value: snapshot
+                                                                            .data[
+                                                                                index]
+                                                                            .completedStatus ==
+                                                                        null
+                                                                    ? 0.5
+                                                                    : snapshot
+                                                                            .data[index]
+                                                                            .completedStatus /
+                                                                        100),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          snapshot.data[index]
+                                                                      .completedStatus ==
+                                                                  null
+                                                              ? Text(
+                                                                  snapshot
+                                                                          .data[
+                                                                              index]
+                                                                          .completedStatus
+                                                                          .toString() +
+                                                                      '% ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w300,
+                                                                      fontSize:
+                                                                          14.0,
+                                                                      color: Colors
+                                                                          .green),
+                                                                )
+                                                              : Text(
+                                                                  snapshot
+                                                                          .data[
+                                                                              index]
+                                                                          .completedStatus
+                                                                          .toString() +
+                                                                      '%',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w300,
+                                                                      fontSize:
+                                                                          14.0,
+                                                                      color: Color(
+                                                                          0xff1e88c6)),
+                                                                ),
+                                                        ],
+                                                      )
                                                     ],
                                                   ),
                                                 ),
-                                                Container(
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  child: LinearPercentIndicator(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 7.1),
-                                                    animation: true,
-                                                    animationDuration: 1000,
-                                                    lineHeight: 8.0,
-                                                    percent: i,
-                                                    linearStrokeCap:
-                                                        LinearStrokeCap
-                                                            .roundAll,
-                                                    progressColor:
-                                                        Color(0xff216693),
-                                                  ),
-                                                )
+                                                // // Container(
+                                                // //   width: MediaQuery.of(context)
+                                                // //       .size
+                                                // //       .width,
+                                                // //   child: LinearPercentIndicator(
+                                                // //     padding: const EdgeInsets
+                                                // //             .symmetric(
+                                                // //         horizontal: 7.1),
+                                                // //     animation: true,
+                                                // //     animationDuration: 1000,
+                                                // //     lineHeight: 8.0,
+                                                // //     percent: i,
+                                                // //     linearStrokeCap:
+                                                // //         LinearStrokeCap
+                                                // //             .roundAll,
+                                                // //     progressColor:
+                                                // //         Color(0xff216693),
+                                                // //   ),
+                                                // )
                                               ],
                                             ))),
                                   ],
@@ -549,9 +562,13 @@ class CardView extends State<CardV> {
     String number = shared.getString("number");
     String email = widget.mail.toString();
     print(number);
-    await FlutterLaunch.launchWathsApp(
+    // await FlutterLaunch.launchWathsApp(
+    //     phone: number,
+    //     message: 'Hello  I have some feedback regarding my project');
+
+    await launch(urlWhatup(
         phone: number,
-        message: 'Hello  I have some feedback regarding my project');
+        message: "Hello  I have some feedback regarding my project"));
   }
 }
 

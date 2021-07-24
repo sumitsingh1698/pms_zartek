@@ -51,7 +51,7 @@ class _MyPDFViewState extends State<MyPDFView> {
                 log(sr);
                 if (sr.contains("Password required")) {
                   log("here");
-                  showDialog(context: context, child: dialog());
+                  showDialog(context: context, builder: (_) => dialog());
                 }
               }).fromUrl(
             widget.url,

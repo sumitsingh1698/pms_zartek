@@ -3,11 +3,6 @@ import 'package:expandable/expandable.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 import 'package:zartek_pms/models/milestone.dart';
 
-import 'package:zartek_pms/screens/attachments.dart';
-import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
-import 'package:zartek_pms/screens/invoice_pdf.dart';
 import 'package:zartek_pms/services/apis.dart';
 
 import 'package:date_format/date_format.dart';

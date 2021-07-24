@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/material.dart';
 import 'package:zartek_pms/models/milestone.dart';
 import 'package:zartek_pms/models/project_status.dart';
 import 'package:zartek_pms/models/my_profile.dart';
